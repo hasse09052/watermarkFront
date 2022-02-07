@@ -6,12 +6,13 @@ if (element) {
 }
 
 (document.querySelector("#button") as HTMLElement).addEventListener("click", () => {
+  getBase64();
   let base64 = (document.querySelector('#base64') as HTMLElement).innerText;
 
   axios
     .post("http://localhost:8080/api/embed", {
       image: base64,
-      text: "testFRONT",
+      text: (document.querySelector('#embedText') as HTMLInputElement).value,
     })
     .then(function (response: any) {
       console.log(response.data);
@@ -19,6 +20,20 @@ if (element) {
       let linkElement = document.querySelector('#download')!;
       linkElement.setAttribute('href', `data:image/png;base64,${response.data.image}`);
       linkElement.setAttribute('download', 'test.png');
+    });
+});
+
+(document.querySelector("#button2") as HTMLElement).addEventListener("click", () => {
+  getBase64();
+  let base64 = (document.querySelector('#base64') as HTMLElement).innerText;
+
+  axios
+    .post("http://localhost:8080/api/decode", {
+      image: base64,
+    })
+    .then(function (response: any) {
+      console.log(response.data);
+      (document.querySelector('#result') as HTMLElement).innerText = response.data.text;
     });
 });
 
@@ -41,10 +56,6 @@ function getBase64() {
   //d1要素に書き出す
   (document.getElementById("base64") as HTMLElement).innerText = data;
 }
-
-(document.querySelector("#button2") as HTMLElement).addEventListener("click", () => {
-  getBase64();
-});
 
 (document.querySelector("#inputArea") as HTMLElement).addEventListener('change', (e) => {
   var reader = new FileReader();
